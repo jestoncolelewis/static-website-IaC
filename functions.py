@@ -106,7 +106,7 @@ def build_lambda(name, lang, role, code, desc):
 # build api
 def build_api(name, target):
     try:
-        api.create_api(
+        response = api.create_api(
             Name = name + '-api',
             ProtocolType = 'HTTP',
             CorsConfiguration = {
@@ -114,6 +114,7 @@ def build_api(name, target):
             },
             Target = target
         )
+        return response.get('ApiEndpoint')
     except botocore.exceptions.ClientError as err:
         print('{}'.format(err.response['Error']['Message']))
 
