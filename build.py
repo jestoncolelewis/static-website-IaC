@@ -21,11 +21,9 @@ for path in os.walk('..'):
 build_web_bucket(name, to_upload)
 
 # dynamo variables
-key_name = ""
+key_name = "" # name for primary key
 
-attribute_name = ""
-
-build_dynamo(name, key_name, attribute_name)
+build_dynamo(name, key_name)
 
 # lambda variables
 lang = "python3.9"
@@ -37,3 +35,6 @@ code = [name, key]
 description = "function for retrieving and updating page views"
 
 build_lambda(name, lang, iam, code, description)
+
+# ses
+build_ses(name)
