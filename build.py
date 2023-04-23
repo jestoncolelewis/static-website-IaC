@@ -6,20 +6,6 @@ name = "" #website name
 # s3 lambda variables
 key = build_lambda_bucket(name)
 
-# s3 web variables
-to_upload = {}
-
-for path in os.walk('..'):
-    with os.scandir(path[0]) as it:
-        files = []
-        for entry in it:
-            if not entry.name.startswith('.') and not entry.name.endswith('.md') and not entry.name.endswith('.http') and not entry.name.endswith('.py') and not entry.name.endswith('ipynb') and not path[0].startswith('../.') and entry.is_file():
-                files.append(entry.name)
-        if not path[0].startswith('../.') and not path[0].startswith('../IaC') and len(files) != 0:
-            to_upload[path[0]] = files
-
-build_web_bucket(name, to_upload)
-
 # dynamo variables
 key_name = "" # name for primary key
 
@@ -34,7 +20,27 @@ code = [name, key]
 
 description = "function for retrieving and updating page views"
 
-build_lambda(name, lang, iam, code, description)
+arn = build_lambda(name, lang, iam, code, description)
 
 # ses
 build_ses(name)
+
+# api
+url = build_api(name, arn)
+
+# update script with 
+...
+
+# s3 web variables
+to_upload = {}
+
+for path in os.walk('..'):
+    with os.scandir(path[0]) as it:
+        files = []
+        for entry in it:
+            if not entry.name.startswith('.') and not entry.name.endswith('.md') and not entry.name.endswith('.http') and not entry.name.endswith('.py') and not entry.name.endswith('ipynb') and not path[0].startswith('../.') and entry.is_file():
+                files.append(entry.name)
+        if not path[0].startswith('../.') and not path[0].startswith('../IaC') and len(files) != 0:
+            to_upload[path[0]] = files
+
+build_web_bucket(name, to_upload)
