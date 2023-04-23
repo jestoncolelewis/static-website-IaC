@@ -6,8 +6,9 @@ s3 = boto3.client('s3')
 lamb = boto3.client('lambda')
 iam = boto3.client('iam')
 api = boto3.client('apigatewayv2')
-dynamo = boto3.client('dynamo')
 route53 = boto3.client('route53')
+dynamo = boto3.client('dynamo') # optional
+ses = boto3.client('sesv2') # optional
 
 # build s3 for lambda
 def build_lambda_bucket(name):
@@ -117,12 +118,12 @@ def build_api(name, target):
         print('{}'.format(err.response['Error']['Message']))
 
 # build dynamo
-def build_dynamo(name, keys, attdef):
+def build_dynamo(name, key):
     try:
         dynamo.create_table(
             TableName = name + '-table',
-            KeySchema = [{"AttributeName": keys, "KeyType": "HASH"}],
-            AttributeDefinitions = [{"AttributeName": attdef, "AttributeType": "N"}],
+            KeySchema = [{"AttributeName": key, "KeyType": "HASH"}],
+            AttributeDefinitions = [{"AttributeName": key, "AttributeType": "N"}],
             ProvisionedThroughput = {
                 'ReadCapacityUnits': 5,
                 'WriteCapacityUnits': 5
@@ -135,5 +136,12 @@ def build_dynamo(name, keys, attdef):
 def build_r53(name):
     try:
         ...
+    except botocore.exceptions.ClientError as err:
+        print('{}'.format(err.response['Error']['Message']))
+
+# build email
+def build_ses(name):
+    try:
+        ses.create_email(EmailIdentity = name + '-email')
     except botocore.exceptions.ClientError as err:
         print('{}'.format(err.response['Error']['Message']))
