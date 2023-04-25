@@ -4,7 +4,7 @@ dynamo = boto3.client('dynamodb')
 dynamor = boto3.resource('dynamodb')
 table = dynamor.Table('breadtest') # type: ignore
 
-def lambda_handler(event, context):
+def handler(event, context):
     response = ''
     if event.get('') == ...:
         posts = 12
