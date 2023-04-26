@@ -1,7 +1,7 @@
 import aws_cdk as core
 import aws_cdk.assertions as assertions
 
-from static_website_ia_c.static_website_ia_c_stack import StaticWebsiteIaCStack
+from stack.static_website_stack import StaticWebsiteIaCStack
 
 # example tests. To run these tests, uncomment this file along with the example
 # resource in static_website_ia_c/static_website_ia_c_stack.py
