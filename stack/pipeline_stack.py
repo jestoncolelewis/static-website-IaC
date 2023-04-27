@@ -17,3 +17,41 @@ class StaticWebsitePipelineStack(Stack):
             self, 'Repo',
             repository_name=name +'-Repo'
         )
+
+        pipeline = pipelines.CodePipeline(
+            self, 'Pipeline',
+            synth=pipelines.ShellStep(
+                'Synth',
+                input=pipelines.CodePipelineSource.code_commit(repo, 'main'),
+                commands=[
+                    'npm -g install aws-cdk',
+                    'pip install -r requirements.txt',
+                    'cdk synth'
+                ]
+            )
+        )
+
+        deploy = StaticWebsitePipeline(self, 'Deploy')
+        deploy_stage = pipeline.add_stage(deploy)
+        deploy_stage.add_post(
+            pipelines.ShellStep(
+                'TestViewerEndpoint',
+                env_from_cfn_outputs={
+                    'ENDPOINT_URL': deploy._hc_viewer_url
+                },
+                commands=['curl -Ssf $ENDPOINT_URL']
+            )
+        )
+        deploy_stage.add_post(
+            pipelines.ShellStep(
+                'TestAPIGatewayEndpoint',
+                env_from_cfn_outputs={
+                    'ENDPOINT_URL': deploy._hc_endpoint
+                },
+                commands=[
+                    'curl -Ssf $ENDPOINT_URL',
+                    'curl -Ssf $ENDPOINT_URL/hello',
+                    'curl -Ssf $ENDPOINT_URL/test'
+                ]
+            )
+        )
