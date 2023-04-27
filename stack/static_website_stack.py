@@ -6,9 +6,7 @@ from aws_cdk import (
     aws_dynamodb as ddb,
     aws_ses as ses,
     aws_route53 as r53,
-    aws_route53_targets as targets,
-    aws_cloudfront as cf,
-    aws_cloudfront_origins as origins
+    aws_route53_targets as targets
 )
 from constructs import Construct
 
