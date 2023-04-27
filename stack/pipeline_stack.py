@@ -6,6 +6,8 @@ from aws_cdk import (
 )
 from stack.pipeline_stage import StaticWebsitePipeline
 
+name = 'mybreadventure.blog'
+
 class StaticWebsitePipelineStack(Stack):
 
     def __init__(self, scope: Construct, id: str, **kwargs):
@@ -13,5 +15,5 @@ class StaticWebsitePipelineStack(Stack):
 
         repo = codecommit.Repository(
             self, 'Repo',
-            repository_name=''
+            repository_name=name +'-Repo'
         )
