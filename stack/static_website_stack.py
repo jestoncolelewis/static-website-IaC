@@ -43,7 +43,7 @@ class StaticWebsiteIaCStack(Stack):
         # API
         gateway = apigw.LambdaRestApi(
             self, 'Endpoint',
-            handler=func
+            handler=func # type: ignore
         )
 
         # Dynamo
