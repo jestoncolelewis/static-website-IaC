@@ -22,7 +22,7 @@ class StaticWebsiteIaCStack(Stack):
             self, 'FunctionHandler',
             runtime=alamb.Runtime.PYTHON_3_9,
             code=alamb.Code.from_asset('lambda'),
-            handler='index.handler'
+            handler='post_return.handler'
         )
 
         # Buckets
