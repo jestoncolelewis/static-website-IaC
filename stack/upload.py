@@ -1,32 +1,13 @@
-from functions import *
 import os
+import boto3
+import botocore.exceptions
+
+s3 = boto3.client('s3')
 
 name = "" #website name
 
-# s3 lambda variables
-key = build_lambda_bucket(name)
-
 # dynamo variables
 key_name = "" # name for primary key
-
-build_dynamo(name, key_name)
-
-# lambda variables
-lang = "python3.9"
-
-iam = build_iam(name)
-
-code = [name, key]
-
-description = "function for retrieving and updating page views"
-
-arn = build_lambda(name, lang, iam, code, description)
-
-# ses
-build_ses(name)
-
-# api
-url = build_api(name, arn)
 
 # update script with 
 ...
@@ -42,5 +23,21 @@ for path in os.walk('..'):
                 files.append(entry.name)
         if not path[0].startswith('../.') and not path[0].startswith('../IaC') and len(files) != 0:
             to_upload[path[0]] = files
+
+# build s3 for website
+def build_web_bucket(name, objects):
+    try:
+        for item in objects:
+            files = objects[item]
+            for file in files:
+                if item[3:] == '':
+                    d = item + '/' + file
+                    s3.upload_file(d, name, file)
+                else:    
+                    f = item[3:] + '/' + file
+                    d = item + '/' + file
+                    s3.upload_file(d, name, f)
+    except botocore.exceptions.ClientError as err:
+        print('{}'.format(err.response['Error']['Message']))
 
 build_web_bucket(name, to_upload)
