@@ -10,7 +10,15 @@ name = "" #website name
 key_name = "" # name for primary key
 
 # update script with 
-...
+with open('../website/script.js', 'r') as script:
+   lines =  script.readlines()
+
+with open('../website/script.js', 'w') as script:
+   url = 'new.url'
+   for code in lines:
+      if code.startswith('const url'):
+         code = 'const url = "{}";\n'.format(url)
+      script.write(code)
 
 # s3 web variables
 to_upload = {}
