@@ -3,7 +3,7 @@ import boto3
 import botocore.exceptions
 
 # build s3 for website
-def upload(name, objects):
+def upload(name):
     try:
         s3 = boto3.client('s3')
 
