@@ -2,31 +2,32 @@ import os
 import boto3
 import botocore.exceptions
 
-# build s3 for website
-def upload(name):
-    try:
-        s3 = boto3.client('s3')
-
-        # update script with 
+def update(endpoint):
+    # update script with 
         with open('../website/script.js', 'r') as script:
             lines =  script.readlines()
 
         with open('../website/script.js', 'w') as script:
-            url = 'new.url'
+            url = endpoint
             for code in lines:
                 if code.startswith('const url'):
                     code = 'const url = "{}";\n'.format(url)
                 script.write(code)
 
+# build s3 for website
+def upload(name):
+    try:
+        s3 = boto3.client('s3')
+
         # s3 web variables
-        to_upload = {}
+        objects = {}
 
         for path in os.walk('../website'):
             with os.scandir(path[0]) as it:
                 files = []
                 for entry in it:
                     files.append(entry.name)
-                to_upload[path[0]] = files
+                objects[path[0]] = files
 
         for item in objects:
             files = objects[item]
