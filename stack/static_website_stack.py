@@ -6,7 +6,8 @@ from aws_cdk import (
     aws_dynamodb as ddb,
     aws_ses as ses,
     aws_route53 as r53,
-    aws_route53_targets as targets
+    aws_route53_targets as targets,
+    CfnOutput
 )
 from constructs import Construct
 
@@ -44,6 +45,11 @@ class StaticWebsiteIaCStack(Stack):
         gateway = apigw.LambdaRestApi(
             self, 'Endpoint',
             handler=func # type: ignore
+        )
+        
+        endpoint = CfnOutput(
+            self, 'GatewayUrl',
+            value=gateway.url
         )
 
         # Dynamo
