@@ -47,7 +47,7 @@ class StaticWebsiteIaCStack(Stack):
             handler=func # type: ignore
         )
         
-        endpoint = CfnOutput(
+        self.endpoint = CfnOutput(
             self, 'GatewayUrl',
             value=gateway.url
         )
