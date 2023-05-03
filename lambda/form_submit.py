@@ -3,7 +3,7 @@ import json
 
 ses = boto3.client('sesv2')
 
-def lambda_handler(event, context):
+def handler(event, context):
     body = event['body']
     print(body)
     body = json.loads(body)
