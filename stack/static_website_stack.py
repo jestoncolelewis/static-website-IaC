@@ -32,7 +32,7 @@ class StaticWebsiteIaCStack(Stack):
             website_redirect=s3.RedirectTarget(host_name=name),
             bucket_name='www.' + name
         )
-        
+
         # Hosting
         zone = r53.HostedZone(
             self, 'HostedZone',
@@ -63,30 +63,40 @@ class StaticWebsiteIaCStack(Stack):
         )
 
         # Post Lambda
-        func = alamb.Function(
-            self, 'FunctionHandler',
+        post_func = alamb.Function(
+            self, 'PostFunctionHandler',
             runtime=alamb.Runtime.PYTHON_3_9,
             code=alamb.Code.from_asset('lambda'),
             handler='post_return.handler'
         )
 
-        # Post Lambda
-        func = alamb.Function(
-            self, 'FunctionHandler',
+        # Form Lambda
+        form_func = alamb.Function(
+            self, 'FormFunctionHandler',
             runtime=alamb.Runtime.PYTHON_3_9,
             code=alamb.Code.from_asset('lambda'),
             handler='form_submit.handler'
         )
 
         # API
-        gateway = apigw.LambdaRestApi(
-            self, 'Endpoint',
-            handler=func # type: ignore
+        post_gateway = apigw.LambdaRestApi(
+            self, 'PostEndpoint',
+            handler=post_func # type: ignore
         )
         
-        self.endpoint = CfnOutput(
-            self, 'GatewayUrl',
-            value=gateway.url
+        self.post_endpoint = CfnOutput(
+            self, 'PostGatewayUrl',
+            value=post_gateway.url
+        )
+
+        form_gateway = apigw.LambdaRestApi(
+            self, 'FormEndpoint',
+            handler=form_func # type: ignore
+        )
+
+        self.form_endpoint = CfnOutput(
+            self, 'FormGatewayUrl',
+            value=form_gateway.url
         )
 
         # Dynamo
