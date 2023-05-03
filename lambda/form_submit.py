@@ -15,7 +15,6 @@ def handler(event, context):
     print(message)
     response = ses.send_email(
         FromEmailAddress = 'web@jeston.click',
-        FromEmailAddressIdentityArn = 'arn:aws:ses:us-west-2:706391136734:identity/jeston.click',
         Destination = {'ToAddresses': ['jeston@jeston.click']},
         ReplyToAddresses = [replyto],
         Content = {
