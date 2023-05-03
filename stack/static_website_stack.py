@@ -17,15 +17,7 @@ class StaticWebsiteIaCStack(Stack):
 
     def __init__(self, scope: Construct, construct_id: str, **kwargs):
         super().__init__(scope, construct_id, **kwargs)
-
-        # Lambda
-        func = alamb.Function(
-            self, 'FunctionHandler',
-            runtime=alamb.Runtime.PYTHON_3_9,
-            code=alamb.Code.from_asset('lambda'),
-            handler='post_return.handler'
-        )
-
+        
         # Buckets
         main_bucket = s3.Bucket(
             self, 'PublicBucket',
@@ -40,24 +32,7 @@ class StaticWebsiteIaCStack(Stack):
             website_redirect=s3.RedirectTarget(host_name=name),
             bucket_name='www.' + name
         )
-
-        # API
-        gateway = apigw.LambdaRestApi(
-            self, 'Endpoint',
-            handler=func # type: ignore
-        )
         
-        self.endpoint = CfnOutput(
-            self, 'GatewayUrl',
-            value=gateway.url
-        )
-
-        # Dynamo
-        table = ddb.Table(
-            self, name + 'Table',
-            partition_key={'name': 'path', 'type': ddb.AttributeType.STRING}
-        )
-
         # Hosting
         zone = r53.HostedZone(
             self, 'HostedZone',
@@ -85,4 +60,37 @@ class StaticWebsiteIaCStack(Stack):
             self, 'Identity',
             identity=ses.Identity.public_hosted_zone(zone),
             mail_from_domain=name
+        )
+
+        # Post Lambda
+        func = alamb.Function(
+            self, 'FunctionHandler',
+            runtime=alamb.Runtime.PYTHON_3_9,
+            code=alamb.Code.from_asset('lambda'),
+            handler='post_return.handler'
+        )
+
+        # Post Lambda
+        func = alamb.Function(
+            self, 'FunctionHandler',
+            runtime=alamb.Runtime.PYTHON_3_9,
+            code=alamb.Code.from_asset('lambda'),
+            handler='form_submit.handler'
+        )
+
+        # API
+        gateway = apigw.LambdaRestApi(
+            self, 'Endpoint',
+            handler=func # type: ignore
+        )
+        
+        self.endpoint = CfnOutput(
+            self, 'GatewayUrl',
+            value=gateway.url
+        )
+
+        # Dynamo
+        table = ddb.Table(
+            self, name + 'Table',
+            partition_key={'name': 'path', 'type': ddb.AttributeType.STRING}
         )
