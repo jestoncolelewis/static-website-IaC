@@ -1,15 +1,14 @@
 from aws_cdk import (
     Stack,
     aws_s3 as s3,
-    aws_lambda as alamb,
     aws_apigateway as apigw,
-    aws_dynamodb as ddb,
-    aws_ses as ses,
     aws_route53 as r53,
     aws_route53_targets as targets,
     CfnOutput
 )
 from constructs import Construct
+from .post_return import PostReturn
+from .form import FormSubmit
 
 name = 'mybreadventure.blog'
 
@@ -55,33 +54,11 @@ class StaticWebsiteIaCStack(Stack):
             record_name='www.' + name
         )
 
-        # SES
-        identity = ses.EmailIdentity(
-            self, 'Identity',
-            identity=ses.Identity.public_hosted_zone(zone),
-            mail_from_domain=name
-        )
-
-        # Post Lambda
-        post_func = alamb.Function(
-            self, 'PostFunctionHandler',
-            runtime=alamb.Runtime.PYTHON_3_9,
-            code=alamb.Code.from_asset('lambda'),
-            handler='post_return.handler'
-        )
-
-        # Form Lambda
-        form_func = alamb.Function(
-            self, 'FormFunctionHandler',
-            runtime=alamb.Runtime.PYTHON_3_9,
-            code=alamb.Code.from_asset('lambda'),
-            handler='form_submit.handler'
-        )
-
         # API
+        post = PostReturn(self, 'PostReturn')
         post_gateway = apigw.LambdaRestApi(
             self, 'PostEndpoint',
-            handler=post_func # type: ignore
+            handler=post._handler # type: ignore
         )
         
         self.post_endpoint = CfnOutput(
@@ -89,18 +66,13 @@ class StaticWebsiteIaCStack(Stack):
             value=post_gateway.url
         )
 
+        form = FormSubmit(self, 'FormSubmit')
         form_gateway = apigw.LambdaRestApi(
             self, 'FormEndpoint',
-            handler=form_func # type: ignore
+            handler=form._handler # type: ignore
         )
 
         self.form_endpoint = CfnOutput(
             self, 'FormGatewayUrl',
             value=form_gateway.url
-        )
-
-        # Dynamo
-        table = ddb.Table(
-            self, name + 'Table',
-            partition_key={'name': 'path', 'type': ddb.AttributeType.STRING}
-        )
+        )       
