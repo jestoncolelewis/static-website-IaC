@@ -3,6 +3,8 @@ from aws_cdk import (
     aws_lambda as alamb,
     aws_ses as ses
 )
+from .static_website_stack import name
+from .hosting import Hosting
 
 class FormSubmit(Construct):
     @property
@@ -25,8 +27,9 @@ class FormSubmit(Construct):
         )
 
         # SES
+        zone = Hosting(self, 'HostedZone')
         self._identity = ses.EmailIdentity(
             self, 'Identity',
-            identity=ses.Identity.public_hosted_zone(zone),
+            identity=ses.Identity.public_hosted_zone(zone._zone),
             mail_from_domain=name
         )
