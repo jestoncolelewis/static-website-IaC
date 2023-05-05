@@ -3,20 +3,20 @@ from aws_cdk import (
     aws_lambda as alamb,
     aws_ses as ses
 )
-from .static_website_stack import name
+from .buckets import name
 from .hosting import Hosting
 
 class FormSubmit(Construct):
-    @property
-    def handler(self):
-        return self._handler
-    
-    @property
-    def identity(self):
-        return self._identity
-
     def __init__(self, scope:Construct, id: str, **kwargs):
         super().__init__(scope, id, **kwargs)
+
+        @property
+        def handler(self):
+            return self._handler
+        
+        @property
+        def identity(self):
+            return self._identity
 
         # Form Lambda
         self._handler = alamb.Function(
