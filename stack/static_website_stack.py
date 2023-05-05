@@ -1,7 +1,6 @@
 from constructs import Construct
 from aws_cdk import (
     Stack,
-    aws_s3 as s3,
     aws_apigateway as apigw,
     CfnOutput
 )
