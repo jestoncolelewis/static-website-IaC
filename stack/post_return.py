@@ -29,3 +29,5 @@ class PostReturn(Construct):
             self, 'Table',
             partition_key={'name': 'path', 'type': ddb.AttributeType.STRING}
         )
+
+        self._table.grant_read_write_data(self._handler)
