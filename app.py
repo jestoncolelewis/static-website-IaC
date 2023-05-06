@@ -1,11 +1,9 @@
 #!/usr/bin/env python3
 import aws_cdk as cdk
 
-from stack.pipeline_stack import StaticWebsitePipelineStack
-
-env_USA = cdk.Environment(account='706391136734', region='us-west-2')
+from stack.static_website_stack import StaticWebsiteIaCStack
 
 app = cdk.App()
-StaticWebsitePipelineStack(app, "StaticWebsitePipelineStack", env=env_USA)
+StaticWebsiteIaCStack(app, "StaticWebsiteIaCStack", env=cdk.Environment(account='706391136734', region='us-west-2'))
 
 app.synth()
