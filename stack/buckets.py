@@ -2,6 +2,7 @@ from constructs import Construct
 from aws_cdk import (
     aws_s3 as s3
 )
+import json
 
 name = 'mybreadventure.blog'
 
@@ -19,12 +20,16 @@ class Buckets(Construct):
         
         # Buckets
         self._main_bucket = s3.Bucket(
-            self, 'PublicBucket',
+            self, 'MainBucket',
             public_read_access=True,
             website_index_document='index.html',
             website_error_document='404.html',
-            bucket_name=name
+            bucket_name=name,
+            block_public_access=s3.BlockPublicAccess(block_public_acls=False)
         )
+
+        policy = '{"Version": "2012-10-17", "Statement": [{"Sid": "PublicReadGetObject","Effect": "Allow","Principal": "*","Action": "s3:GetObject","Resource": "arn:aws:s3:::{}]/*"}]}'.format(name)
+        self._main_bucket.add_to_resource_policy(permission=json.loads(policy))
 
         self._www_bucket = s3.Bucket(
             self, 'wwwBucket',
