@@ -1,6 +1,7 @@
 from constructs import Construct
 from aws_cdk import (
-    aws_s3 as s3
+    aws_s3 as s3,
+    RemovalPolicy
 )
 import json
 
@@ -25,7 +26,8 @@ class Buckets(Construct):
             website_index_document='index.html',
             website_error_document='404.html',
             bucket_name=name,
-            block_public_access=s3.BlockPublicAccess(block_public_acls=False)
+            block_public_access=s3.BlockPublicAccess(block_public_acls=False),
+            removal_policy=RemovalPolicy.DESTROY
         )
 
         policy = '{"Version": "2012-10-17", "Statement": [{"Sid": "PublicReadGetObject","Effect": "Allow","Principal": "*","Action": "s3:GetObject","Resource": "arn:aws:s3:::{}]/*"}]}'.format(name)
@@ -34,5 +36,6 @@ class Buckets(Construct):
         self._www_bucket = s3.Bucket(
             self, 'wwwBucket',
             website_redirect=s3.RedirectTarget(host_name=name),
-            bucket_name='www.' + name
+            bucket_name='www.' + name,
+            removal_policy=RemovalPolicy.DESTROY
         )
