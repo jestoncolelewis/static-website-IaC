@@ -30,6 +30,5 @@ class FormSubmit(Construct):
         zone = Hosting(self, 'HostedZone')
         self._identity = ses.EmailIdentity(
             self, 'Identity',
-            identity=ses.Identity.public_hosted_zone(zone._zone),
-            mail_from_domain=name
+            identity=ses.Identity.public_hosted_zone(zone._zone)
         )
