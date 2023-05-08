@@ -1,6 +1,7 @@
 from constructs import Construct
 from aws_cdk import (
     aws_s3 as s3,
+    aws_iam as iam,
     RemovalPolicy
 )
 import json
@@ -30,8 +31,13 @@ class Buckets(Construct):
             removal_policy=RemovalPolicy.DESTROY
         )
 
-        policy = '{"Version": "2012-10-17", "Statement": [{"Sid": "PublicReadGetObject","Effect": "Allow","Principal": "*","Action": "s3:GetObject","Resource": "arn:aws:s3:::{}]/*"}]}'.format(name)
-        self._main_bucket.add_to_resource_policy(permission=json.loads(policy))
+        policy = iam.PolicyStatement(
+            actions=["s3:GetObject"],
+            sid="PublicReadGetObject",
+            )
+        policy.add_any_principal()
+        policy.add_resources('arn:aws:s3:::{}/*'.format(name))
+        self._main_bucket.add_to_resource_policy(permission=policy)
 
         self._www_bucket = s3.Bucket(
             self, 'wwwBucket',
