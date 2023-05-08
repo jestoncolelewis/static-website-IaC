@@ -20,7 +20,7 @@ class StaticWebsitePipelineStack(Stack):
                 'Synth',
                 input=CodePipelineSource.git_hub('jestoncolelewis/static-website-IaC', 'main'),
                 commands=[
-                    'npm install -g aws_cdk',
+                    'npm install -g aws-cdk',
                     'python pip install -r requirements.txt',
                     'cdk synth'
                 ]
