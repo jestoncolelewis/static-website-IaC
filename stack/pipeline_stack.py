@@ -14,9 +14,9 @@ class StaticWebsitePipelineStack(Stack):
             pipeline_name='StaticWebsitePipeline',
             synth=ShellStep(
                 'Synth',
-                input=CodePipelineSource.git_hub('https://github.com/jestoncolelewis/static-website-IaC.git', 'main'),
+                input=CodePipelineSource.git_hub('jestoncolelewis/static-website-IaC', 'main'),
                 commands=[
-                    'npm instlla -g aws_cdk',
+                    'npm install -g aws_cdk',
                     'python pip install -r requirements.txt',
                     'cdk synth'
                 ]
