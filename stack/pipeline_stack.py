@@ -7,6 +7,7 @@ from aws_cdk.pipelines import CodePipeline, CodePipelineSource, ShellStep
 from .pipeline_stage import StaticWebsitePipeline
 
 name = 'mybreadventure.blog'
+synth_commands = ['npm install -g aws-cdk', 'python pip install -r requirements.txt', 'cdk synth']
 
 class StaticWebsitePipelineStack(Stack):
 
@@ -19,11 +20,7 @@ class StaticWebsitePipelineStack(Stack):
             synth=ShellStep(
                 'Synth',
                 input=CodePipelineSource.git_hub('jestoncolelewis/static-website-IaC', 'main'),
-                commands=[
-                    'npm install -g aws-cdk',
-                    'python pip install -r requirements.txt',
-                    'cdk synth'
-                ]
+                commands=synth_commands
             )
         )
 
