@@ -1,10 +1,12 @@
 from constructs import Construct
 from aws_cdk import (
     aws_s3 as s3,
+    aws_cloudfront as cf,
+    aws_cloudfront_origins as origins,
     aws_iam as iam,
+    aws_certificatemanager as cm,
     RemovalPolicy
 )
-import json
 
 name = 'mybreadventure.blog'
 
@@ -19,6 +21,14 @@ class Buckets(Construct):
         @property
         def www_bucket(self):
             return self._www_bucket
+        
+        @property
+        def main_distro(self):
+            return self._main_distro
+        
+        @property
+        def www_distro(self):
+            return self._www_distro
         
         # Buckets
         self._main_bucket = s3.Bucket(
@@ -44,4 +54,25 @@ class Buckets(Construct):
             website_redirect=s3.RedirectTarget(host_name=name),
             bucket_name='www.' + name,
             removal_policy=RemovalPolicy.DESTROY
+        )
+
+        # Distribution
+        self._main_distro = cf.Distribution(
+            self, 'MainDistro',
+            default_behavior=cf.BehaviorOptions(
+                origin=origins.S3Origin(self._main_bucket)
+            )
+        )
+
+        self._www_distro = cf.Distribution(
+            self, 'wwwDistro',
+            default_behavior=cf.BehaviorOptions(
+                origin=origins.S3Origin(self._www_bucket)
+            )
+        )
+
+        # Certificate
+        cert = cm.Certificate(
+            self, 'Certificate',
+            domain_name='*.' + name
         )
