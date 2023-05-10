@@ -76,3 +76,5 @@ class Buckets(Construct):
             self, 'Certificate',
             domain_name='*.' + name
         )
+
+        cert.apply_removal_policy(RemovalPolicy.DESTROY)
