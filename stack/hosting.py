@@ -24,7 +24,7 @@ class Hosting(Construct):
         main_record = r53.RecordSet(
             self, 'MainRecord',
             record_type=r53.RecordType.A,
-            target=r53.RecordTarget.from_alias(targets.BucketWebsiteTarget(bucket._main_bucket)),
+            target=r53.RecordTarget.from_alias(targets.CloudFrontTarget(bucket._main_distro)),
             zone=hosted_zone,
             record_name=name
         )
@@ -32,7 +32,7 @@ class Hosting(Construct):
         www_record = r53.RecordSet(
             self, 'wwwRecord',
             record_type=r53.RecordType.A,
-            target=r53.RecordTarget.from_alias(targets.BucketWebsiteTarget(bucket._www_bucket)),
+            target=r53.RecordTarget.from_alias(targets.CloudFrontTarget(bucket._www_distro)),
             zone=hosted_zone,
             record_name='www.' + name
         )
